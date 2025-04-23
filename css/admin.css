@@ -1,0 +1,76 @@
+/* Стили для админ-панели */
+
+.list-group-item.active {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%) !important;
+    border-color: transparent !important;
+}
+
+.artist-item {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.artist-item:hover {
+    background-color: #f8f9fa;
+    border-left: 3px solid #6a11cb;
+    transform: translateX(5px);
+}
+
+.artist-item.active {
+    border-left: 3px solid #2575fc;
+}
+
+.alert-success {
+    margin-bottom: 0;
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+.alert-container {
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.alert-container.show {
+    opacity: 1;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #6a11cb;
+    box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.25);
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Анимация для сообщений */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.4s ease forwards;
+} 
