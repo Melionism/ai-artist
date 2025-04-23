@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ИИ-Артисты</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #080510;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Анимированный фон */
+        .animated-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        canvas#bgCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .noise-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/png;base64,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');
+            opacity: 0.02;
+            pointer-events: none;
+        }
+
+        .hero-section {
+            background: transparent;
+            color: white;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(106, 17, 203, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(106, 17, 203, 0.6) 0%, rgba(37, 117, 252, 0) 70%);
+            filter: blur(20px);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .hero-glow.one {
+            top: -50px;
+            right: 30%;
+            animation: float 6s ease-in-out infinite alternate;
+        }
+
+        .hero-glow.two {
+            bottom: -30px;
+            left: 20%;
+            animation: float 8s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                transform: translateY(-20px) scale(1.1);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            border: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(106, 17, 203, 0.3);
+        }
+
+        .list-group-item {
+            border-left: none;
+            border-right: none;
+            padding: 0.75rem 1.25rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border: none;
+        }
+
+        footer {
+            border-radius: 15px 15px 0 0;
+            background-color: rgba(0, 0, 0, 0.8) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Анимированный фон -->
+    <div class="animated-background">
+        <canvas id="bgCanvas"></canvas>
+        <div class="noise-overlay"></div>
+    </div>
+
+    <header class="hero-section py-5 mb-5">
+        <div class="hero-glow one"></div>
+        <div class="hero-glow two"></div>
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="display-4 fw-bold">ИИ-Артисты</h1>
+            </div>
+            <p class="lead text-center mt-3 mb-0 opacity-90">Уникальные артисты, созданные искусственным интеллектом</p>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        <div class="row g-4" id="artists-container">
+            <!-- Карточки артистов будут добавлены с помощью JavaScript -->
+        </div>
+    </main>
+
+    <!-- Модальное окно -->
+    <div class="modal fade" id="artistModal" tabindex="-1" aria-labelledby="artistModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen-lg-down modal-xl">
+            <div class="modal-content">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close ms-auto neon-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <!-- Шапка артиста с фото и основной информацией -->
+                    <div class="artist-header">
+                        <img id="modalArtistImage" src="" alt="" class="artist-header-img">
+                        <div class="artist-header-genre">
+                            <span id="modalArtistGenre" class="badge rounded-pill"></span>
+                        </div>
+                        <div class="artist-header-content">
+                            <h2 id="modalArtistName" class="display-4 fw-bold"></h2>
+                        </div>
+                    </div>
+                    
+                    <div class="container-fluid px-4 pb-4 modal-dark-bg">
+                        <!-- Описание артиста -->
+                        <div class="card section-card">
+                            <div class="card-body">
+                                <h4 class="fw-bold mb-3"><i class="bi bi-info-circle me-2"></i>О артисте</h4>
+                                <p id="modalArtistDescription" class="lead mb-0"></p>
+                            </div>
+                        </div>
+                        
+                        <!-- Видеоклип -->
+                        <div class="card section-card">
+                            <div class="card-header section-header">
+                                <i class="bi bi-film me-2"></i>Видеоклип
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="videoContainer">
+                                    <!-- Видео будет добавлено с помощью JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Плейлист -->
+                        <div class="card section-card mb-0">
+                            <div class="card-header section-header">
+                                <i class="bi bi-music-note-list me-2"></i>Плейлист
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="list-group list-group-flush" id="modalArtistPlaylist">
+                                    <!-- Треки будут добавлены с помощью JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 modal-dark-bg">
+                    <button type="button" class="btn neon-btn rounded-pill px-4" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Закрыть
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-1">© 2023 ИИ-Артисты. Все права защищены.</p>
+            <div class="mt-2">
+                <a href="#" class="text-white mx-2"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="text-white mx-2"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="text-white mx-2"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="text-white mx-2"><i class="bi bi-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/artists.js"></script>
+    <script src="js/file-api.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Скрипт для анимированного фона -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('bgCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Устанавливаем размер холста равным размеру окна
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            
+            // Вызываем функцию изменения размера
+            resizeCanvas();
+            
+            // Обновляем размер холста при изменении размера окна
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Класс для создания частиц
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.radius = Math.random() * 2 + 1;
+                    this.speedX = (Math.random() - 0.5) * 0.3;
+                    this.speedY = (Math.random() - 0.5) * 0.3;
+                    this.color = this.getRandomColor();
+                    this.alpha = Math.random() * 0.5 + 0.1;
+                    this.originalAlpha = this.alpha;
+                }
+                
+                // Получаем случайный цвет частицы
+                getRandomColor() {
+                    const colors = [
+                        '114, 9, 183',    // фиолетовый
+                        '87, 11, 173',    // темно-фиолетовый
+                        '63, 81, 181',    // индиго
+                        '37, 117, 252',   // синий
+                        '33, 150, 243'    // голубой
+                    ];
+                    return colors[Math.floor(Math.random() * colors.length)];
+                }
+                
+                // Обновляем позицию частицы
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    // Проверяем границы холста
+                    if (this.x < 0 || this.x > canvas.width) {
+                        this.speedX = -this.speedX;
+                    }
+                    
+                    if (this.y < 0 || this.y > canvas.height) {
+                        this.speedY = -this.speedY;
+                    }
+                    
+                    // Пульсация прозрачности
+                    this.alpha = this.originalAlpha * (0.7 + Math.sin(Date.now() * 0.001) * 0.3);
+                }
+                
+                // Рисуем частицу
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
+                    ctx.fill();
+                }
+            }
+            
+            // Класс для создания волны
+            class Wave {
+                constructor(y, amplitude, frequency, speed, color) {
+                    this.y = y;
+                    this.amplitude = amplitude;
+                    this.frequency = frequency;
+                    this.speed = speed;
+                    this.color = color;
+                    this.time = 0;
+                }
+                
+                // Обновляем волну
+                update() {
+                    this.time += this.speed;
+                }
+                
+                // Рисуем волну
+                draw() {
+                    ctx.beginPath();
+                    ctx.moveTo(0, this.y);
+                    
+                    for (let x = 0; x < canvas.width; x++) {
+                        const y = this.y + Math.sin(x * this.frequency + this.time) * this.amplitude;
+                        ctx.lineTo(x, y);
+                    }
+                    
+                    ctx.strokeStyle = this.color;
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+            }
+            
+            // Создаем массив частиц и волн
+            const particles = [];
+            const waves = [];
+            
+            // Добавляем частицы
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+            
+            // Добавляем волны
+            waves.push(new Wave(canvas.height * 0.3, 20, 0.005, 0.02, 'rgba(106, 17, 203, 0.2)'));
+            waves.push(new Wave(canvas.height * 0.5, 15, 0.01, 0.03, 'rgba(37, 117, 252, 0.15)'));
+            waves.push(new Wave(canvas.height * 0.7, 10, 0.02, 0.01, 'rgba(0, 123, 255, 0.1)'));
+            
+            // Создаем интерактивный эффект для указателя мыши
+            let mouseX = 0;
+            let mouseY = 0;
+            let mouseRadius = 100;
+            
+            // Отслеживаем движение мыши
+            document.addEventListener('mousemove', function(event) {
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+            
+            // Основная анимация
+            function animate() {
+                // Очищаем холст
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Создаем градиентный фон
+                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                gradient.addColorStop(0, '#0f0c29');
+                gradient.addColorStop(0.5, '#302b63');
+                gradient.addColorStop(1, '#24243e');
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Обновляем и рисуем волны
+                for (const wave of waves) {
+                    wave.update();
+                    wave.draw();
+                }
+                
+                // Обновляем и рисуем частицы
+                for (const particle of particles) {
+                    particle.update();
+                    
+                    // Применяем интерактивность при наведении мыши
+                    const dx = mouseX - particle.x;
+                    const dy = mouseY - particle.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < mouseRadius) {
+                        const angle = Math.atan2(dy, dx);
+                        const force = (mouseRadius - distance) / mouseRadius;
+                        
+                        particle.x -= Math.cos(angle) * force * 2;
+                        particle.y -= Math.sin(angle) * force * 2;
+                    }
+                    
+                    particle.draw();
+                }
+                
+                // Рисуем круг вокруг указателя мыши
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, mouseRadius * 0.2, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, mouseRadius, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                // Создаем эффект свечения для указателя мыши
+                const glow = ctx.createRadialGradient(
+                    mouseX, mouseY, 0,
+                    mouseX, mouseY, 40
+                );
+                
+                glow.addColorStop(0, 'rgba(106, 17, 203, 0.3)');
+                glow.addColorStop(1, 'rgba(37, 117, 252, 0)');
+                
+                ctx.fillStyle = glow;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Запускаем анимацию снова
+                requestAnimationFrame(animate);
+            }
+            
+            // Запускаем основную анимацию
+            animate();
+
+            // Анимация световых пятен в шапке
+            const heroGlows = document.querySelectorAll('.hero-glow');
+            
+            document.addEventListener('mousemove', function(event) {
+                heroGlows.forEach((glow, index) => {
+                    // Двигаем световые пятна в зависимости от положения мыши
+                    if (index === 0) {
+                        glow.style.transform = `translate(${event.clientX / 20}px, ${event.clientY / 30}px)`;
+                    } else {
+                        glow.style.transform = `translate(${-event.clientX / 30}px, ${-event.clientY / 20}px)`;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
